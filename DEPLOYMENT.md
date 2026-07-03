@@ -15,10 +15,18 @@ Set environment variables:
 
 ```env
 PUBLIC_BASE_URL=https://your-render-app.onrender.com
-APP_TOKEN=your-dashboard-password
-AGENT_TOKEN=your-long-shared-agent-token
+APP_TOKEN=
+AGENT_TOKEN=
 TIKTOK_WEBHOOK_SECRET=
 DATABASE_PATH=./data/server-db.json
+```
+
+For internal no-password mode, leave these blank:
+
+```env
+APP_TOKEN=
+AGENT_TOKEN=
+TIKTOK_WEBHOOK_SECRET=
 ```
 
 TikTok webhook URL:
@@ -33,7 +41,7 @@ Create `.env.agent` from `.env.agent.example`:
 
 ```env
 SERVER_URL=https://your-render-app.onrender.com
-AGENT_TOKEN=your-long-shared-agent-token
+AGENT_TOKEN=
 AGENT_ID=packing-station-1
 PRINTER_NAME=
 AGENT_DRY_RUN=true

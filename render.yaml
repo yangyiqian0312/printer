@@ -8,10 +8,6 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22
-      - key: APP_TOKEN
-        sync: false
-      - key: AGENT_TOKEN
-        sync: false
       - key: TIKTOK_WEBHOOK_SECRET
         sync: false
       - key: PUBLIC_BASE_URL

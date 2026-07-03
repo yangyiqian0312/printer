@@ -8,18 +8,19 @@ function sleep(ms) {
 }
 
 async function serverRequest(path, options = {}) {
-  if (!agentConfig.agentToken) {
-    throw new Error('AGENT_TOKEN is required for the Windows print agent');
+  const headers = {
+    'content-type': 'application/json',
+    'x-agent-id': agentConfig.agentId,
+    ...(options.headers ?? {})
+  };
+
+  if (agentConfig.agentToken) {
+    headers.authorization = `Bearer ${agentConfig.agentToken}`;
   }
 
   const response = await fetch(`${agentConfig.serverUrl}${path}`, {
     ...options,
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${agentConfig.agentToken}`,
-      'x-agent-id': agentConfig.agentId,
-      ...(options.headers ?? {})
-    }
+    headers
   });
   const body = await response.json().catch(() => ({}));
 

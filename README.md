@@ -34,8 +34,8 @@ Render 环境变量参考 `.env.server.example`：
 ```env
 PORT=3000
 PUBLIC_BASE_URL=https://your-render-app.onrender.com
-APP_TOKEN=change-this-dashboard-password
-AGENT_TOKEN=change-this-agent-token
+APP_TOKEN=
+AGENT_TOKEN=
 TIKTOK_WEBHOOK_SECRET=
 DATABASE_PATH=./data/server-db.json
 ```
@@ -43,8 +43,8 @@ DATABASE_PATH=./data/server-db.json
 重要变量：
 
 - `PUBLIC_BASE_URL`：Render 给你的固定 HTTPS 地址。
-- `APP_TOKEN`：打开网页后台/API 用的密码。
-- `AGENT_TOKEN`：Windows agent 连接 Render 用的长密码。
+- `APP_TOKEN`：可选；留空就是网页后台不需要密码。
+- `AGENT_TOKEN`：可选；留空就是 Windows agent 不需要 token。
 - `TIKTOK_WEBHOOK_SECRET`：先留空，等 webhook 跑通后再加签名/secret。
 
 Render 部署后，网页后台是：
@@ -91,7 +91,7 @@ Copy-Item .env.agent.example .env.agent
 
 ```env
 SERVER_URL=https://your-render-app.onrender.com
-AGENT_TOKEN=change-this-to-the-same-token-as-render
+AGENT_TOKEN=
 AGENT_ID=packing-station-1
 PRINTER_NAME=
 LABEL_WIDTH=2in
@@ -159,6 +159,24 @@ data\logs\service-err.log
 npm start        # 启动 Render server，本地也可测试 server
 npm run agent    # 启动 Windows 打印 agent
 npm run local    # 启动旧本地一体化版本
+```
+
+## 无密码内部模式
+
+如果这是内部工具，不想登录、不想填 token，可以这样：
+
+Render 环境变量：
+
+```env
+APP_TOKEN=
+AGENT_TOKEN=
+TIKTOK_WEBHOOK_SECRET=
+```
+
+Windows `.env.agent`：
+
+```env
+AGENT_TOKEN=
 ```
 
 ## 注意
