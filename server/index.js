@@ -175,7 +175,7 @@ app.post('/agent/jobs/:jobId/failed', verifyAgentToken, async (req, res) => {
 app.post('/webhook/tiktok', async (req, res, next) => {
   try {
     if (!verifyWebhookSecret(req)) {
-      return res.status(401).json({ ok: false, error: 'Invalid webhook secret' });
+      return res.status(401).end();
     }
 
     const expandedBody = expandNestedJson(req.body);
@@ -196,14 +196,7 @@ app.post('/webhook/tiktok', async (req, res, next) => {
       });
 
       logger.warn('TikTok webhook received but not mapped', { event_id: event.id, error: error.message });
-      return res.status(200).json({
-        ok: true,
-        code: 0,
-        message: 'success',
-        received: true,
-        queued: false,
-        eventId: event.id
-      });
+      return res.status(200).end();
     }
 
     const event = await queue.appendWebhookEvent({
@@ -231,14 +224,7 @@ app.post('/webhook/tiktok', async (req, res, next) => {
       created: result.created
     });
 
-    res.status(200).json({
-      ok: true,
-      code: 0,
-      message: 'success',
-      received: true,
-      queued: result.created,
-      order: result.order
-    });
+    res.status(200).end();
   } catch (error) {
     next(error);
   }
