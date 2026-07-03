@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TikTok Live Label Printer</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Live order labels</p>
+          <h1>TikTok Label Console</h1>
+        </div>
+        <div class="status-strip">
+          <span id="serviceDot" class="dot"></span>
+          <span id="serviceStatus">Checking service</span>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Order status summary">
+        <article>
+          <span>Total</span>
+          <strong id="statTotal">0</strong>
+        </article>
+        <article>
+          <span>Printed</span>
+          <strong id="statPrinted">0</strong>
+        </article>
+        <article>
+          <span>Generated</span>
+          <strong id="statGenerated">0</strong>
+        </article>
+        <article class="danger">
+          <span>Failed</span>
+          <strong id="statFailed">0</strong>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <form id="printForm" class="panel test-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Manual test</p>
+              <h2>Queue a label</h2>
+            </div>
+            <button type="submit">Send</button>
+          </div>
+
+          <label>
+            Buyer username
+            <input name="buyerUsername" autocomplete="off" placeholder="buyer123" required>
+          </label>
+
+          <label>
+            Order ID
+            <input name="orderId" autocomplete="off" placeholder="58392741" required>
+          </label>
+
+          <p id="formResult" class="result" role="status"></p>
+        </form>
+
+        <section class="panel config-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Connection</p>
+              <h2>Webhook</h2>
+            </div>
+            <button id="copyWebhook" type="button">Copy</button>
+          </div>
+
+          <dl class="config-list">
+            <div>
+              <dt>Webhook URL</dt>
+              <dd id="webhookUrl">Loading</dd>
+            </div>
+            <div>
+              <dt>Printer</dt>
+              <dd id="printerName">Loading</dd>
+            </div>
+            <div>
+              <dt>Print mode</dt>
+              <dd id="printMode">Loading</dd>
+            </div>
+            <div>
+              <dt>Label</dt>
+              <dd id="labelSize">Loading</dd>
+            </div>
+          </dl>
+        </section>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Queue</p>
+            <h2>Orders</h2>
+          </div>
+          <button id="refresh" type="button">Refresh</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Buyer</th>
+                <th>Status</th>
+                <th>Updated</th>
+                <th>Error</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody">
+              <tr>
+                <td colspan="6" class="empty">No orders yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel events-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">TikTok intake</p>
+            <h2>Webhook Events</h2>
+          </div>
+        </div>
+        <div id="eventsList" class="events-list">
+          <p class="empty">No webhook events yet</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
