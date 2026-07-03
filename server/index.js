@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { serverConfig } from './config.js';
 import { QueueStore } from './queueStore.js';
-import { expandNestedJson, normalizeOrder } from '../shared/orderMapping.js';
+import { expandNestedJson, findDeepValue, normalizeOrder } from '../shared/orderMapping.js';
 import { logger } from '../shared/logger.js';
 
 const app = express();
@@ -75,6 +75,30 @@ function collectWebhookHeaders(req) {
   ];
 
   return Object.fromEntries(interesting.map((name) => [name, req.get(name)]).filter(([, value]) => value));
+}
+
+function normalizeWebhookOrder(body) {
+  try {
+    return normalizeOrder(body);
+  } catch (error) {
+    const orderId = findDeepValue(body, [
+      'orderId',
+      'order_id',
+      'order_id_str',
+      'order_sn',
+      'orderNo',
+      'order_no',
+      'orderNumber',
+      'order_number'
+    ]);
+
+    if (!orderId) throw error;
+
+    return {
+      orderId: String(orderId).trim(),
+      buyerUsername: 'unknown'
+    };
+  }
 }
 
 app.get('/health', (_req, res) => {
@@ -172,7 +196,7 @@ app.post('/agent/jobs/:jobId/failed', verifyAgentToken, async (req, res) => {
   res.json({ ok: true, order });
 });
 
-app.post('/webhook/tiktok', async (req, res, next) => {
+async function handleTikTokWebhook(req, res, next) {
   try {
     if (!verifyWebhookSecret(req)) {
       return res.status(401).end();
@@ -182,7 +206,7 @@ app.post('/webhook/tiktok', async (req, res, next) => {
     let order;
 
     try {
-      order = normalizeOrder(expandedBody);
+      order = normalizeWebhookOrder(expandedBody);
     } catch (error) {
       const event = await queue.appendWebhookEvent({
         source: 'tiktok',
@@ -228,7 +252,10 @@ app.post('/webhook/tiktok', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+}
+
+app.post('/webhook/tiktok', handleTikTokWebhook);
+app.post('/webhooks/tiktok', handleTikTokWebhook);
 
 app.get('/webhook/tiktok', (req, res) => {
   const challenge = req.query.challenge ?? req.query.verify_token ?? req.query.echostr;
@@ -236,7 +263,17 @@ app.get('/webhook/tiktok', (req, res) => {
   res.json({ ok: true, endpoint: 'tiktok-webhook' });
 });
 
+app.get('/webhooks/tiktok', (req, res) => {
+  const challenge = req.query.challenge ?? req.query.verify_token ?? req.query.echostr;
+  if (challenge) return res.type('text/plain').send(String(challenge));
+  res.json({ ok: true, endpoint: 'tiktok-webhook' });
+});
+
 app.options('/webhook/tiktok', (_req, res) => {
+  res.set('allow', 'GET,POST,OPTIONS').status(204).send();
+});
+
+app.options('/webhooks/tiktok', (_req, res) => {
   res.set('allow', 'GET,POST,OPTIONS').status(204).send();
 });
 
